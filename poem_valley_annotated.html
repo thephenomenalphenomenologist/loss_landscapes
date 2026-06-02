@@ -47,7 +47,6 @@
     min-height: 100vh;
   }
 
-  /* Grain texture overlay */
   body::before {
     content: '';
     position: fixed;
@@ -65,7 +64,6 @@
     padding: 80px 40px 120px;
   }
 
-  /* Header */
   .poem-header {
     text-align: center;
     margin-bottom: 72px;
@@ -91,7 +89,6 @@
     text-transform: uppercase;
   }
 
-  /* Glossary note */
   .glossary-note {
     font-family: 'Inconsolata', monospace;
     font-size: 13px;
@@ -103,7 +100,6 @@
     border-radius: 0 4px 4px 0;
   }
 
-  /* Stanza */
   .stanza {
     margin-bottom: 52px;
   }
@@ -115,12 +111,11 @@
     white-space: pre-wrap;
   }
 
-  /* Annotated terms */
   .term {
     color: var(--accent);
     border-bottom: 1px solid var(--accent-light);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.15s;
     padding: 0 1px;
     border-radius: 1px;
   }
@@ -129,16 +124,15 @@
     background: var(--highlight);
   }
 
-  /* Inline definition bubble */
   .def-bubble {
     display: none;
-    margin: 6px 0 4px 0;
-    padding: 14px 18px;
+    margin: 10px 0 6px 0;
+    padding: 18px 20px 16px;
     background: var(--gloss-bg);
     border: 0.5px solid var(--gloss-border);
     border-radius: 4px;
     font-size: 15px;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--ink-mid);
     position: relative;
   }
@@ -158,28 +152,26 @@
 
   .def-bubble.open { display: block; }
 
-  .def-bubble .def-term-label {
+  .def-term-label {
     font-family: 'Inconsolata', monospace;
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent);
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
-  .def-bubble .def-text {
-    font-style: italic;
+  .def-text { font-style: italic; }
+
+  .def-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
   }
 
-  .def-bubble .def-placeholder {
-    color: var(--ink-faint);
-    font-style: italic;
-  }
-
-  .def-bubble .edit-btn {
-    margin-top: 10px;
-    display: inline-block;
+  .edit-btn {
     font-family: 'Inconsolata', monospace;
     font-size: 12px;
     letter-spacing: 0.06em;
@@ -187,9 +179,7 @@
     cursor: pointer;
     border-bottom: 0.5px dashed var(--accent-light);
     background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+    border-top: none; border-left: none; border-right: none;
     padding: 0;
   }
 
@@ -204,8 +194,8 @@
     border-radius: 3px;
     padding: 10px;
     resize: vertical;
-    min-height: 70px;
-    line-height: 1.6;
+    min-height: 90px;
+    line-height: 1.65;
   }
 
   .def-bubble textarea:focus {
@@ -213,9 +203,8 @@
     border-color: var(--accent);
   }
 
-  .def-bubble .save-btn {
+  .save-btn {
     margin-top: 8px;
-    display: inline-block;
     font-family: 'Inconsolata', monospace;
     font-size: 12px;
     letter-spacing: 0.06em;
@@ -227,7 +216,6 @@
     cursor: pointer;
   }
 
-  /* Divider */
   .divider {
     text-align: center;
     color: var(--accent-light);
@@ -236,7 +224,6 @@
     letter-spacing: 0.4em;
   }
 
-  /* Glossary panel */
   .glossary-panel {
     margin-top: 80px;
     border-top: 0.5px solid var(--accent-light);
@@ -254,33 +241,42 @@
   }
 
   .glossary-entry {
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     padding-left: 20px;
     border-left: 1.5px solid var(--accent-light);
   }
 
-  .glossary-entry .g-term {
+  .g-term {
     font-size: 17px;
     font-weight: 600;
     font-style: italic;
     color: var(--accent);
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
-  .glossary-entry .g-def {
+  .g-def {
     font-size: 16px;
     color: var(--ink-mid);
     font-style: italic;
+    line-height: 1.7;
+    display: block;
   }
 
-  .glossary-entry .g-empty {
-    font-size: 14px;
+  .g-edit-btn {
+    margin-top: 8px;
     font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 0.5px dashed var(--ink-faint);
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+    padding: 0;
+    display: inline-block;
   }
 
-  /* Footer */
   .footer {
     margin-top: 80px;
     text-align: center;
@@ -291,7 +287,6 @@
     border-top: 0.5px solid var(--parchment-dark);
     padding-top: 24px;
   }
-
 </style>
 </head>
 <body>
@@ -303,79 +298,80 @@
   </header>
 
   <p class="glossary-note">
-    Terms underlined in <span style="color:var(--accent)">amber</span> are placeholders for your definitions.
-    Click any term to expand it, then write your own gloss.
+    Terms underlined in <span style="color:var(--accent)">amber</span> carry definitions. Click any to read — or revise.
   </p>
 
   <div class="poem-body">
 
-    <div class="stanza" id="s1">
+    <div class="stanza">
       <p>The wail is but a whisper
-when it bounced for the last time
+when it <span class="term" data-key="bounced">bounced</span> for the last time
 off the barrier of the canal.
-<span class="term" data-key="tone">Tone</span> is signal in a coat,
-or noise wearing signal's hat.
+Tone is <span class="term" data-key="signal">signal</span> in a coat,
+or <span class="term" data-key="noise">noise</span> wearing signal's hat.
 Not knowing which is our own <span class="term" data-key="fault">fault</span>.
 We all must empty into the valley,
 with a thud that shakes the ground
 but not the sky.</p>
+      <div class="def-bubble" id="bubble-bounced"></div>
       <div class="def-bubble" id="bubble-tone"></div>
+      <div class="def-bubble" id="bubble-signal"></div>
+      <div class="def-bubble" id="bubble-noise"></div>
       <div class="def-bubble" id="bubble-fault"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s2">
+    <div class="stanza">
       <p>And the valley is our home,
-and we are local to the valley
+and we are <span class="term" data-key="local">local</span> to the valley
 and it is local to us.</p>
+      <div class="def-bubble" id="bubble-local"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s3">
+    <div class="stanza">
       <p>The terrain shifts beneath our feet;
 feet that have neither
 stepped up nor fallen down,
 still inherit the land of the world.
-It's the <span class="term" data-key="static">static</span> that lulls us
-into a false sense of <span class="term" data-key="stillness">stillness</span>.</p>
-      <div class="def-bubble" id="bubble-static"></div>
-      <div class="def-bubble" id="bubble-stillness"></div>
+It's the static that lulls us
+into a false sense of stillness.</p>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s4">
-      <p>If the globe were not so slippery,
+    <div class="stanza">
+      <p>If the <span class="term" data-key="globe">globe</span> were not so slippery,
 we would live and die by the valley.
 Everything we can ever need
 gathers in the valley.</p>
+      <div class="def-bubble" id="bubble-globe"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s5">
+    <div class="stanza">
       <p>Coming of age begins in the valley.
 And many would tell tall tales
 of peaks that we can see,
 Although warned not to seek.
-<span class="term" data-key="adventure">Adventure</span> is equally the chased and the chaser.</p>
-      <div class="def-bubble" id="bubble-adventure"></div>
+Adventure is equally the chased and the chaser.</p>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s6">
-      <p>The ground is an <span class="term" data-key="empire">empire</span>;
+    <div class="stanza">
+      <p>The ground is an empire;
 it may neither rise nor fall.
-It produces our states.</p>
-      <div class="def-bubble" id="bubble-empire"></div>
+It produces our <span class="term" data-key="states">states</span>.</p>
+      <div class="def-bubble" id="bubble-states"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s7">
+    <div class="stanza">
       <p>Even the rodents of the sky
 who wish to fly,
 do not feel the need to learn
@@ -388,7 +384,7 @@ and are thus, overkill.</p>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s8">
+    <div class="stanza">
       <p>The <span class="term" data-key="momentum">momentum</span> of growth
 first added to their stillness,
 pent up energy urges
@@ -399,89 +395,118 @@ lost to Death's wager.</p>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s9">
-      <p><span class="term" data-key="damping">Damping</span> the swing of
+    <div class="stanza">
+      <p>Damping the <span class="term" data-key="swing">swing</span> of
 here and not here
 left them in fear
 of never leaving the nest.</p>
-      <div class="def-bubble" id="bubble-damping"></div>
+      <div class="def-bubble" id="bubble-swing"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s10">
-      <p>The loss is alarmed by
-<span class="term" data-key="distress">distress signals</span>,
+    <div class="stanza">
+      <p>The <span class="term" data-key="loss">loss</span> is alarmed by
+distress signals,
 just noise to the untrained ear.</p>
-      <div class="def-bubble" id="bubble-distress"></div>
+      <div class="def-bubble" id="bubble-loss"></div>
     </div>
 
     <div class="divider">· · ·</div>
 
-    <div class="stanza" id="s11">
+    <div class="stanza">
       <p>We all must empty into the valley,
 with a thud that shakes the ground
 but not the sky.</p>
     </div>
 
-  </div><!-- /.poem-body -->
+  </div>
 
   <section class="glossary-panel" id="glossary">
-    <h2>Your Glossary</h2>
-    <div id="glossary-entries">
-      <p style="font-family:'Inconsolata',monospace;font-size:13px;color:var(--ink-faint);">
-        No terms defined yet. Click a highlighted word above to begin.
-      </p>
-    </div>
+    <h2>Glossary</h2>
+    <div id="glossary-entries"></div>
   </section>
 
   <footer class="footer">
-    Definitions are saved in this browser session.
+    Click any term to read its definition or revise it.
   </footer>
 
-</div><!-- /.wrapper -->
+</div>
 
 <script>
 const TERMS = {
-  tone: { label: "Tone" },
-  fault: { label: "Fault" },
-  static: { label: "Static" },
-  stillness: { label: "Stillness" },
-  adventure: { label: "Adventure" },
-  empire: { label: "Empire" },
-  overshoot: { label: "Overshoot" },
-  momentum: { label: "Momentum" },
-  damping: { label: "Damping" },
-  distress: { label: "Distress Signals" },
+  bounced: {
+    label: "Bounced",
+    def: "Even in our vision, objects can bounce, be absorbed, or just \"splat\" into place upon impact. These motions are very physical, but are not limited to just basketballs and other physical objects."
+  },
+  signal: {
+    label: "Signal",
+    def: "In phenomenology, I break everything down into signals. As humans, we tend to care about differentiating between signals as approach or avoid. According to Signal Detection Theory, there are four outcomes of signal interactions. The matrix is organized simply as whether a signal is present or not present, and whether the subject perceived the signal or not — thus four outcomes, with two favorable ones: the signal is present and it was detected, or the signal is not present and the subject did not state detecting it."
+  },
+  noise: {
+    label: "Noise",
+    def: "The sound that one does not want to hear, but accompanies signals, which we do want to hear. It may be irregular, erratic, non-periodic, or otherwise unharmonious. In learning, however, noise is simply thermal agitation and it can be beneficial when escaping from \"sticky situations.\" Noise disrupts direction, which can be exactly what we want when \"turning a new leaf.\" Noise can reshape the effective energy landscape, but awareness of the skill is a crucial first step."
+  },
+  tone: {
+    label: "Tone",
+    def: "Tone sits between signal and noise — a signal that carries its own texture, coloring how a message is received. Whether it serves communication or obscures it depends entirely on what the listener is trained to hear."
+  },
+  fault: {
+    label: "Fault",
+    def: "Fault means more than blame here. A fault is a fracture in the Earth's crust. The signal and noise in this stanza are like physical rocks that move relative to each other, resulting in a fracture as small as millimeters in length or big enough to define tectonic plates. The fracture can suddenly release pressure that causes earthquakes. Consider this as you read the poem again."
+  },
+  local: {
+    label: "Local",
+    def: "Mathematically, local behavior zooms in to study a place in space. Automatically, perception becomes limited or immediate."
+  },
+  globe: {
+    label: "Globe",
+    def: "Another double meaning. Physically, the globe is the entire space. The valley may be the lowest place locally, but globally, there may be another lowest point. How else to know but to venture out there?"
+  },
+  states: {
+    label: "States",
+    def: "A state of a system refers to its exact condition, in this moment. It's easiest to compare to an emotional state, because regardless of the spectrum of possibilities that exist for us to feel, a person is most likely feeling something specific. States with boundaries or in a governed context is also implied."
+  },
+  overshoot: {
+    label: "Overshoot",
+    def: "A phenomenon where a dynamic system's response to a sudden input exceeds its target; we acted way beyond the scope of what is necessary."
+  },
+  momentum: {
+    label: "Momentum",
+    def: "Ironically, momentum accelerates training because it adds inertia to motion. It's like going to bed the night before a big day."
+  },
+  swing: {
+    label: "Swing",
+    def: "Swing is used as a synonym for oscillations, which earns its own course of study in physics. The system lacks the friction or \"damping\" required to settle into a stable state. The system hovers around a central equilibrium point, but does not settle. Machine learning engineers aim to halt unwanted oscillations, as does any consumer of the self-help genre who wants to quit an addiction or replace bad habits — but the swing causes reversion to past behavior."
+  },
+  loss: {
+    label: "Loss",
+    def: "We all know what loss feels like, but its physical definition will make us conscious of just how often we experience loss. In machine learning, loss is a numerical metric that describes how wrong a model's predictions are. We can apply this to Signal Detection Theory, defined in the Signal definition."
+  }
 };
 
-const defs = {};
+const ORDER = ['bounced','signal','noise','tone','fault','local','globe','states','overshoot','momentum','swing','loss'];
 
 function renderBubble(key) {
   const bubble = document.getElementById('bubble-' + key);
   if (!bubble) return;
-  const label = TERMS[key].label;
-  const saved = defs[key] || '';
-
+  const t = TERMS[key];
   bubble.innerHTML = `
-    <span class="def-term-label">${label}</span>
-    ${saved
-      ? `<span class="def-text" id="deftext-${key}">${saved}</span>
-         <br><button class="edit-btn" onclick="openEditor('${key}')">edit definition</button>`
-      : `<span class="def-placeholder" id="deftext-${key}">No definition yet.</span>
-         <br><button class="edit-btn" onclick="openEditor('${key}')">+ add your definition</button>`
-    }
+    <span class="def-term-label">${t.label}</span>
+    <span class="def-text">${t.def}</span>
+    <div class="def-actions">
+      <button class="edit-btn" onclick="openEditor('${key}')">edit</button>
+    </div>
   `;
 }
 
 function openEditor(key) {
   const bubble = document.getElementById('bubble-' + key);
   if (!bubble) return;
-  const label = TERMS[key].label;
-  const saved = defs[key] || '';
+  const t = TERMS[key];
   bubble.innerHTML = `
-    <span class="def-term-label">${label}</span>
-    <textarea id="ta-${key}" placeholder="Write your definition, interpretation, or annotation…">${saved}</textarea>
+    <span class="def-term-label">${t.label}</span>
+    <textarea id="ta-${key}">${t.def}</textarea>
     <br><button class="save-btn" onclick="saveDef('${key}')">save</button>
   `;
   const ta = document.getElementById('ta-' + key);
@@ -491,24 +516,32 @@ function openEditor(key) {
 function saveDef(key) {
   const ta = document.getElementById('ta-' + key);
   if (!ta) return;
-  defs[key] = ta.value.trim();
+  TERMS[key].def = ta.value.trim();
   renderBubble(key);
-  updateGlossary();
+  renderGlossary();
 }
 
-function updateGlossary() {
+function renderGlossary() {
   const panel = document.getElementById('glossary-entries');
-  const defined = Object.keys(defs).filter(k => defs[k]);
-  if (!defined.length) {
-    panel.innerHTML = '<p style="font-family:\'Inconsolata\',monospace;font-size:13px;color:var(--ink-faint);">No terms defined yet. Click a highlighted word above to begin.</p>';
-    return;
-  }
-  panel.innerHTML = defined.map(k => `
+  panel.innerHTML = ORDER.map(k => `
     <div class="glossary-entry">
       <span class="g-term">${TERMS[k].label}</span>
-      <span class="g-def">${defs[k]}</span>
+      <span class="g-def">${TERMS[k].def}</span>
+      <button class="g-edit-btn" onclick="scrollAndOpen('${k}')">jump to poem ↑</button>
     </div>
   `).join('');
+}
+
+function scrollAndOpen(key) {
+  const bubble = document.getElementById('bubble-' + key);
+  const termEl = document.querySelector('.term[data-key="' + key + '"]');
+  if (!bubble || !termEl) return;
+  document.querySelectorAll('.def-bubble.open').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.term.active').forEach(t => t.classList.remove('active'));
+  bubble.classList.add('open');
+  termEl.classList.add('active');
+  renderBubble(key);
+  bubble.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 document.querySelectorAll('.term').forEach(el => {
@@ -517,13 +550,9 @@ document.querySelectorAll('.term').forEach(el => {
     const key = this.dataset.key;
     const bubble = document.getElementById('bubble-' + key);
     if (!bubble) return;
-
     const isOpen = bubble.classList.contains('open');
-
-    // Close all
     document.querySelectorAll('.def-bubble.open').forEach(b => b.classList.remove('open'));
     document.querySelectorAll('.term.active').forEach(t => t.classList.remove('active'));
-
     if (!isOpen) {
       bubble.classList.add('open');
       this.classList.add('active');
@@ -545,6 +574,8 @@ document.addEventListener('click', () => {
 document.querySelectorAll('.def-bubble').forEach(b => {
   b.addEventListener('click', e => e.stopPropagation());
 });
+
+renderGlossary();
 </script>
 </body>
 </html>
