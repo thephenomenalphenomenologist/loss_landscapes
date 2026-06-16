@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Out of the Mouth of Valleys — The Phenomenal Phenomenologist</title>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0e0d0b;
+      --bg-warm:     #13120f;
+      --surface:     #1a1814;
+      --border:      #2c2920;
+      --text-primary: #d6cfc4;
+      --text-dim:    #7a7268;
+      --text-muted:  #4a4640;
+      --accent:      #8a7a5a;
+      --accent-glow: rgba(138, 122, 90, 0.18);
+      --plateau:     #4a5a6a;  /* cool steel for plateau passages */
+      --valley:      #6a4a3a;  /* warm ember for valley passages */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.75;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      padding: 3.5rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .series-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.4rem;
+    }
+
+    .series-label span {
+      color: var(--accent);
+    }
+
+    h1 {
+      font-family: 'IM Fell English', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    /* Terrain elevation bar — the signature element */
+    .terrain-bar {
+      width: min(480px, 90%);
+      margin: 0 auto 0.5rem;
+      height: 36px;
+      position: relative;
+    }
+
+    .terrain-bar svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .terrain-label {
+      display: flex;
+      justify-content: space-between;
+      width: min(480px, 90%);
+      margin: 0 auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0 3.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        grid-template-columns: 1fr;
+        gap: 2rem 0;
+      }
+      .annotations-panel {
+        border-top: 1px solid var(--border);
+        padding-top: 2rem;
+      }
+    }
+
+    /* ─── POEM ─── */
+    .poem-col {
+      padding-top: 3rem;
+    }
+
+    .stanza {
+      margin-bottom: 2.2rem;
+      position: relative;
+    }
+
+    .stanza:last-child { margin-bottom: 0; }
+
+    .poem-line {
+      display: block;
+      font-family: 'IM Fell English', Georgia, serif;
+      font-size: 1.08rem;
+      line-height: 1.85;
+      color: var(--text-primary);
+      transition: color 0.2s;
+    }
+
+    /* spaced letter effect for the slow-down line */
+    .poem-line.spaced {
+      letter-spacing: 0.28em;
+      color: var(--text-dim);
+    }
+
+    /* annotated lines get a subtle left accent */
+    .poem-line.has-note {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .poem-line.has-note::before {
+      content: '';
+      position: absolute;
+      left: -1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.2s ease, opacity 0.2s;
+      opacity: 0;
+    }
+
+    .poem-line.has-note:hover::before,
+    .poem-line.has-note.active::before {
+      height: 70%;
+      opacity: 1;
+    }
+
+    .poem-line.has-note:hover,
+    .poem-line.has-note.active {
+      color: #e8e0d5;
+    }
+
+    /* inline annotation trigger */
+    .note-trigger {
+      display: inline;
+      border-bottom: 1px dotted var(--accent);
+      padding-bottom: 1px;
+    }
+
+    /* section divider */
+    .section-glyph {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin: 2.4rem 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .section-glyph::before,
+    .section-glyph::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── ANNOTATIONS PANEL ─── */
+    .annotations-panel {
+      padding-top: 3rem;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .panel-header {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .annotation-card {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1rem;
+      animation: fadeSlide 0.25s ease;
+    }
+
+    .annotation-card.visible {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-term {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-body {
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--text-dim);
+    }
+
+    .card-body em {
+      color: var(--text-primary);
+      font-style: italic;
+    }
+
+    .card-body strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* default "hover a line" state */
+    .panel-idle {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      line-height: 1.9;
+    }
+
+    .footer-inner a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ─── RESPONSIVE tweaks ─── */
+    @media (max-width: 480px) {
+      header { padding: 2.5rem 1.25rem 1.5rem; }
+      .container { padding: 0 1.25rem 4rem; }
+      .poem-line { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="series-label">The Phenomenal Phenomenologist · <span>Loss Landscapes II</span></p>
+  <h1>Out of the Mouth of Valleys</h1>
+  <p class="subtitle">From the valley to the plateau&hellip;</p>
+
+  <!-- Terrain elevation bar: the signature element -->
+  <div class="terrain-bar" aria-hidden="true">
+    <svg viewBox="0 0 480 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- valley dip on left -->
+      <polyline
+        points="0,28 40,28 80,6 120,30 160,32 200,32 240,32 480,32"
+        stroke="#3a3530" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <!-- plateau flat line (elevated) -->
+      <polyline
+        points="0,18 480,18"
+        stroke="none" fill="none"/>
+      <!-- animated dot traveling valley → plateau -->
+      <circle r="2.5" fill="#8a7a5a" opacity="0.9">
+        <animateMotion dur="8s" repeatCount="indefinite"
+          path="M0,28 C40,28 60,6 100,30 C140,34 160,32 200,32 C260,32 360,18 480,18"
+          calcMode="spline"
+          keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.2 1"/>
+      </circle>
+      <!-- valley label tick -->
+      <line x1="100" y1="30" x2="100" y2="36" stroke="#3a3530" stroke-width="1"/>
+      <!-- plateau label tick -->
+      <line x1="380" y1="18" x2="380" y2="24" stroke="#3a3530" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="terrain-label">
+    <span>valley</span>
+    <span>plateau</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ POEM ═══════════════════ -->
+  <div class="poem-col" role="main">
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="excruciating">
+        <span class="note-trigger">Excruciating</span>
+      </span>
+      <span class="poem-line">Dullness, like</span>
+      <span class="poem-line has-note" data-note="gambles">
+        <span class="note-trigger">gambles</span>
+      </span>
+      <span class="poem-line">always won.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line">Loss lessens</span>
+      <span class="poem-line spaced">s l o w l y</span>
+      <span class="poem-line">But surely</span>
+      <span class="poem-line">Yet times</span>
+      <span class="poem-line">Move swiftly.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="10000">
+        <span class="note-trigger">10000 hours;</span>
+      </span>
+      <span class="poem-line">Losses become zero,</span>
+      <span class="poem-line">But you are no hero.</span>
+    </div>
+
+    <div class="section-glyph">∿ plateau boundary ∿</div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="edge">
+        <span class="note-trigger">Out here at the edge of the valley,</span>
+      </span>
+      <span class="poem-line">No one is in the forest</span>
+      <span class="poem-line">To hear a tree fall.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="echo">
+        <span class="note-trigger">An echo can't survive</span>
+      </span>
+      <span class="poem-line has-note" data-note="echo">
+        The plateau's signal.
+      </span>
+      <span class="poem-line">The echo is noise;</span>
+      <span class="poem-line has-note" data-note="noisecancel">
+        But the <span class="note-trigger">sound of the plateau</span>
+      </span>
+      <span class="poem-line">Is noise cancelling.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line">Still it screams.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="glare">
+        <span class="note-trigger">The vocals of the valley old</span>
+      </span>
+      <span class="poem-line">Has hardened into glare,</span>
+      <span class="poem-line">That ricochets in our skull.</span>
+    </div>
+
+    <div class="section-glyph">∿ the rut ∿</div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="rut">
+        When you make a choice,
+      </span>
+      <span class="poem-line has-note" data-note="rut">
+        You <span class="note-trigger">make it from a rut;</span>
+      </span>
+      <span class="poem-line">where life is not just a bitch,</span>
+      <span class="poem-line">But a mutt.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line">A stick</span>
+      <span class="poem-line">in the mud</span>
+      <span class="poem-line">That got stuck.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="raised">
+        <span class="note-trigger">The plateau</span>
+      </span>
+      <span class="poem-line">Is as flat as the valley,</span>
+      <span class="poem-line">But it is raised</span>
+      <span class="poem-line">Like a voice in a huff.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="snuff">
+        Desires put out
+      </span>
+      <span class="poem-line has-note" data-note="snuff">
+        Like a <span class="note-trigger">candle snuff.</span>
+      </span>
+    </div>
+
+    <div class="section-glyph">∿ decay ∿</div>
+
+    <div class="stanza">
+      <span class="poem-line">The plateau exists on every continent,</span>
+      <span class="poem-line">Every nation.</span>
+      <span class="poem-line has-note" data-note="states">
+        <span class="note-trigger">States hardened by decay</span>
+      </span>
+      <span class="poem-line">But most importantly by the memory of loss.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="rust">
+        <span class="note-trigger">Pipes bust.</span>
+      </span>
+      <span class="poem-line has-note" data-note="rust">
+        <span class="note-trigger">Iron rusts.</span>
+      </span>
+      <span class="poem-line">The longer you dwell,</span>
+      <span class="poem-line">The likelier you become unwell.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="well">
+        <span class="note-trigger">The next step is as likely</span>
+      </span>
+      <span class="poem-line">As leaving a dry well.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="fell">
+        To rise above would be a solution
+      </span>
+      <span class="poem-line has-note" data-note="fell">
+        If only you <span class="note-trigger">remember how you fell.</span>
+      </span>
+    </div>
+
+    <div class="section-glyph">∿ temptation ∿</div>
+
+    <div class="stanza">
+      <span class="poem-line has-note" data-note="sin">
+        So easily
+      </span>
+      <span class="poem-line has-note" data-note="sin">
+        Can <span class="note-trigger">sin be derived</span>
+      </span>
+      <span class="poem-line">From sensation.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line">Will I, won't I</span>
+      <span class="poem-line">be removed</span>
+      <span class="poem-line">From temptation.</span>
+    </div>
+
+    <div class="stanza">
+      <span class="poem-line">Restless.</span>
+      <span class="poem-line">Restless.</span>
+      <span class="poem-line has-note" data-note="tempest">
+        <span class="note-trigger">Tempest.</span>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════ ANNOTATIONS ═══════════════════ -->
+  <aside class="annotations-panel" aria-label="Annotations">
+    <p class="panel-header">annotations</p>
+
+    <p class="panel-idle" id="panel-idle">
+      Hover or tap a marked line to open a note.
+    </p>
+
+    <div class="annotation-card" id="note-excruciating">
+      <p class="card-term">Excruciating</p>
+      <p class="card-body">The poem opens at maximum signal — then immediately names it as <em>dullness</em>. In ML loss landscapes, a model in a flat region still registers the same cost; the excruciating part is that the pain has no gradient to follow out of it.</p>
+    </div>
+
+    <div class="annotation-card" id="note-gambles">
+      <p class="card-term">Gambles always won</p>
+      <p class="card-body">When every risk is absorbed without consequence — neither reward nor sharp loss — you are not winning. You are in a <strong>zero-gradient zone</strong>. The plateau masquerades as safety.</p>
+    </div>
+
+    <div class="annotation-card" id="note-10000">
+      <p class="card-term">10,000 hours</p>
+      <p class="card-body">Gladwell's threshold for mastery — but here it arrives hollow. The loss has converged to zero. The model is <em>trained</em>. Yet no heroism follows because convergence on the plateau is still flatness: you've minimized loss without finding meaning.</p>
+    </div>
+
+    <div class="annotation-card" id="note-edge">
+      <p class="card-term">Edge of the valley</p>
+      <p class="card-body">The valley is where loss is steep, felt, <em>alive</em>. Its mouth is where that gradient ends. To exit is to enter the plateau — where the old signals no longer reach, and no tree falls loud enough for anyone to hear.</p>
+    </div>
+
+    <div class="annotation-card" id="note-echo">
+      <p class="card-term">Echo / signal</p>
+      <p class="card-body">Gradients are <strong>signals</strong>. On the plateau they vanish — not because nothing happened, but because the terrain won't carry them. The echo is the loss you still feel; the plateau calls it noise and cancels it.</p>
+    </div>
+
+    <div class="annotation-card" id="note-noisecancel">
+      <p class="card-term">Noise cancelling</p>
+      <p class="card-body">Active noise cancellation works by generating an <em>inverse</em> sound wave. The plateau doesn't silence grief — it produces its own counter-signal until your old frequency can no longer be distinguished from the background. <em>Still it screams.</em></p>
+    </div>
+
+    <div class="annotation-card" id="note-glare">
+      <p class="card-term">Vocals hardened into glare</p>
+      <p class="card-body">Sound that cannot travel outward turns inward. The valley's emotional signal — once voice, once cry — calcifies into a kind of reflected light: harsh, blinding, trapped in the skull. Memory as internal ricochet.</p>
+    </div>
+
+    <div class="annotation-card" id="note-rut">
+      <p class="card-term">Choice from a rut</p>
+      <p class="card-body">A rut is a valley that has been traveled so many times it no longer looks like terrain — it looks like the <em>only</em> path. In optimization: a local minimum so well-worn that the loss surface itself seems to confirm you should stay.</p>
+    </div>
+
+    <div class="annotation-card" id="note-raised">
+      <p class="card-term">Flat but raised</p>
+      <p class="card-body">The plateau and the valley share topology: both are flat regions of the loss landscape. The difference is elevation. The plateau is the valley's grief <em>lifted</em> — not transcended, just displaced upward, still horizontal, still stuck.</p>
+    </div>
+
+    <div class="annotation-card" id="note-snuff">
+      <p class="card-term">Candle snuff</p>
+      <p class="card-body">A snuffer doesn't blow out a candle — it <em>smothers</em> it by removing oxygen. Desires on the plateau aren't extinguished dramatically. They are quietly deprived of what they need to burn.</p>
+    </div>
+
+    <div class="annotation-card" id="note-states">
+      <p class="card-term">States hardened by decay</p>
+      <p class="card-body">Both political states and psychological states — the poem refuses to separate them. Institutional decay and personal stagnation share the same mechanism: <strong>the memory of loss</strong> becomes load-bearing infrastructure, holding everything in place.</p>
+    </div>
+
+    <div class="annotation-card" id="note-rust">
+      <p class="card-term">Pipes bust. Iron rusts.</p>
+      <p class="card-body">Infrastructure metaphors for a nervous system on the plateau. Oxidation doesn't announce itself — it accumulates invisibly until the structure fails. Dwelling too long in flat affect is the same corrosion, on the inside.</p>
+    </div>
+
+    <div class="annotation-card" id="note-well">
+      <p class="card-term">The dry well</p>
+      <p class="card-body">A well is a valley, built on purpose — a deliberate descent to reach something vital. A <em>dry</em> well still has the shape of the valley but nothing to draw from. Next steps feel equally empty: the motion without the resource.</p>
+    </div>
+
+    <div class="annotation-card" id="note-fell">
+      <p class="card-term">Remember how you fell</p>
+      <p class="card-body">The paradox of the plateau: to leave it, you need the gradient information from your original descent — the very signal the plateau has been canceling. Recovery requires <em>re-accessing the valley</em>, not forgetting it.</p>
+    </div>
+
+    <div class="annotation-card" id="note-sin">
+      <p class="card-term">Sin derived from sensation</p>
+      <p class="card-body">"Derived" is calculus: sin as the derivative of sensation. On the plateau, sensation is flat — but the <em>memory</em> of sensation still has slope. Temptation is the gradient that remains after the loss has leveled out.</p>
+    </div>
+
+    <div class="annotation-card" id="note-tempest">
+      <p class="card-term">Tempest</p>
+      <p class="card-body">The poem ends on turbulence — not resolution. A tempest is weather that comes <em>after</em> stagnation: atmospheric pressure finally releasing. Whether it destroys or clears is the question the poem refuses to answer.</p>
+    </div>
+
+  </aside>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>The Phenomenal Phenomenologist &nbsp;·&nbsp; Loss Landscapes Series</p>
+    <p style="margin-top:0.4rem;">
+      <a href="https://thephenomenalphenomenologist.substack.com">substack</a>
+      &nbsp;·&nbsp;
+      <a href="https://thephenomenalphenomenologist.substack.com/p/out-of-the-mouth-of-valleys">read on substack</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  const lines = document.querySelectorAll('.poem-line.has-note');
+  const idle  = document.getElementById('panel-idle');
+  const cards = document.querySelectorAll('.annotation-card');
+
+  let activeNote = null;
+
+  function showNote(noteId) {
+    // hide all cards
+    cards.forEach(c => c.classList.remove('visible'));
+    lines.forEach(l => l.classList.remove('active'));
+    idle.style.display = 'none';
+
+    const card = document.getElementById('note-' + noteId);
+    if (card) {
+      card.classList.add('visible');
+      activeNote = noteId;
+      // mark all lines with this note
+      lines.forEach(l => {
+        if (l.dataset.note === noteId) l.classList.add('active');
+      });
+    }
+  }
+
+  function clearNote() {
+    cards.forEach(c => c.classList.remove('visible'));
+    lines.forEach(l => l.classList.remove('active'));
+    idle.style.display = '';
+    activeNote = null;
+  }
+
+  lines.forEach(line => {
+    line.addEventListener('mouseenter', () => showNote(line.dataset.note));
+    line.addEventListener('mouseleave', () => {
+      // small delay so moving between adjacent lines of same note is smooth
+      setTimeout(() => {
+        const stillOnSame = document.querySelector('.poem-line.has-note:hover');
+        if (!stillOnSame) clearNote();
+      }, 80);
+    });
+    line.addEventListener('click', () => {
+      if (activeNote === line.dataset.note) {
+        clearNote();
+      } else {
+        showNote(line.dataset.note);
+      }
+    });
+  });
+
+  // close on click outside on mobile
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.poem-line.has-note') && !e.target.closest('.annotation-card')) {
+      clearNote();
+    }
+  });
+</script>
+</body>
+</html>
